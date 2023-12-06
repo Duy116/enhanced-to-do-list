@@ -25,14 +25,14 @@ export default function Home() {
             onClick={handleDrawerToggle}
             className='text-inherit mr-0.5 sm:block hidden'
           >
-            <MenuIcon />
+            <MenuIcon className='align-text-bottom'/>
           </IconButton>
           <Typography
             variant="h6"
             component="div"
             className='flex-grow hidden sm:block'
           >
-            {open.toString()}
+            To do list v2
           </Typography>
         </Toolbar>
       </AppBar>
