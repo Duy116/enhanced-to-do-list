@@ -5,14 +5,13 @@ import './globals.css'
 import Header from './Header'
 import { Box, Toolbar } from '@mui/material'
 import { useState } from 'react'
+import { Provider } from 'react-redux'
+import { store } from '@/redux/store'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children, } 
+  : { children: React.ReactNode }) {
   const [ open, setOpen ] = useState(false);
 
   return (
@@ -24,7 +23,9 @@ export default function RootLayout({
           : 'flex-grow transition-all ease-in-out duration-500'}>
           <Box component="main"  className='p-3'>
             <Toolbar />
-            <main>{children}</main>
+            <Provider store={store}>
+              <main>{children}</main>
+            </Provider>
           </Box>
         </Box>
       </body>
