@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store'
+import { isAfter, isBefore, parseISO } from 'date-fns';
 
 interface ToDoState {
     id: number,
@@ -39,10 +40,39 @@ const todosSlice = createSlice({
         const index = state.indexOf(todo)
         state.splice(index, 1);
       }
+    },
+    todoSort(state: ToDoState[], action) {
+      state.sort((a, b) => {
+        if (action.payload === "user") {
+          let fa = a.user.toLowerCase(),
+          fb = b.user.toLowerCase();
+    
+          if (fa < fb) {
+              return -1;
+          }
+          if (fa > fb) {
+              return 1;
+          }
+          return 0;
+        }
+        if (action.payload === "deadline") {
+          let da = parseISO(a.deadline),
+              db = parseISO(b.deadline);
+    
+          if (isAfter(da, db)) {
+              return 1;
+          }
+          if (isBefore(da, db)) {
+              return -1;
+          }
+          return 0;
+        }
+        return 0;
+      })
     }
   }
 })
 
-export const { todoAdded, todoToggled, todoDelete } = todosSlice.actions
+export const { todoAdded, todoToggled, todoDelete, todoSort } = todosSlice.actions
 export const selectTodos = (state: RootState) => state.todos
 export default todosSlice.reducer

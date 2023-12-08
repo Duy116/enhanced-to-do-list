@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { selectTodos, todoAdded, todoDelete, todoToggled } from '@/redux/todosSlice';
+import { selectTodos, todoAdded, todoDelete, todoSort, todoToggled } from '@/redux/todosSlice';
 import { Typography, Button, Grid, Tooltip, Input, Checkbox, Select, Box, MenuItem, SelectChangeEvent, Dialog, Alert, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react'
@@ -25,6 +25,7 @@ function Task() {
     user: "",
   });
   const [ open, setOpen ] = React.useState(false);
+  const [ sort, setSort ] = React.useState("");
   const todos = useAppSelector(selectTodos);
   const users = useAppSelector(selectUsers);
   const dispatch = useAppDispatch();
@@ -71,6 +72,11 @@ function Task() {
       })
   }
 
+  function handleSort(e: SelectChangeEvent): void {
+    setSort(e.target.value);
+    dispatch(todoSort(e.target.value))
+  }
+
   return (
     <>
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -88,12 +94,14 @@ function Task() {
           }>
           Please enter task name
         </Alert>      
-    </Dialog>
+      </Dialog>
       <Typography variant='h4'>List of tasks</Typography>
-      <Box className='flex'>
-        <Input value={newTask.text} onChange={(e) => handleChangeName(e)}/>
-        <Typography>For</Typography>
-        <Select label='User' value={newTask.user} onChange={(e) => handleChangeUser(e)}>
+      <Box className='flex items-center ml-5 mb-5'>
+        <Input className='mr-5 text-base'
+          value={newTask.text} onChange={(e) => handleChangeName(e)}/>
+        <Typography className='mr-1 text-base'>Assigned to:</Typography>
+        <Select className='mr-5 text-base min-w-[100px]'
+          variant='standard' label='User' value={newTask.user} onChange={(e) => handleChangeUser(e)}>
           <MenuItem value=''>
             <em>None</em>
           </MenuItem>
@@ -101,15 +109,32 @@ function Task() {
             <MenuItem key={user.id} value={user.name}>{user.name}</MenuItem>
           ))}
         </Select>
-        <input type="datetime-local" step='1' value={newTask.deadline} onChange={(e) => handleChangeTime(e)}/>
-        <Button onClick={handleAdd}>Add</Button>
+        <input className='mr-5 text-base'
+          type="datetime-local" step='1' value={newTask.deadline} onChange={(e) => handleChangeTime(e)}/>
+        <Button className='mr-5 rounded-md bg-blue-500 text-white hover:bg-blue-700'
+          onClick={handleAdd}>
+          Add
+        </Button>
+        <Typography className='text-base mr-1'>Sort:</Typography>
+        <Select className='text-base min-w-[100px]'
+          variant='standard' label='Sort' value={sort} onChange={(e) => handleSort(e)}>
+          <MenuItem value=''>
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value='user'>
+            User
+          </MenuItem>
+          <MenuItem value='deadline'>
+            Deadline
+          </MenuItem>
+        </Select>
       </Box>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} rowSpacing={2} className='items-center ml-5'>
         {todos.map((todo) => (
           <React.Fragment key={todo.id}>
             <Grid item xs={4}>
               <Tooltip title={todo.text} arrow>
-                <Typography className={isAfter(new Date(), parseISO(todo.deadline)) ? 
+                <Typography className={isAfter(new Date(), parseISO(todo.deadline)) && !todo.completed ? 
                   'text-red-500 text-ellipsis overflow-hidden ...'
                   : 'text-ellipsis overflow-hidden ...'}>
                   {todo.text}
