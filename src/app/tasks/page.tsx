@@ -5,7 +5,7 @@ import { selectTodos, todoAdded, todoDelete, todoToggled } from '@/redux/todosSl
 import { Typography, Button, Grid, Tooltip, Input, Checkbox, Select, Box, MenuItem, SelectChangeEvent, Dialog, Alert, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react'
-import { format, parseISO } from 'date-fns'
+import { format, isAfter, parseISO } from 'date-fns'
 import { selectUsers } from '@/redux/usersSlice';
 
 interface ToDoState {
@@ -109,7 +109,11 @@ function Task() {
           <React.Fragment key={todo.id}>
             <Grid item xs={4}>
               <Tooltip title={todo.text} arrow>
-                <Typography className='text-ellipsis overflow-hidden ...'>{todo.text}</Typography>
+                <Typography className={isAfter(new Date(), parseISO(todo.deadline)) ? 
+                  'text-red-500 text-ellipsis overflow-hidden ...'
+                  : 'text-ellipsis overflow-hidden ...'}>
+                  {todo.text}
+                </Typography>
               </Tooltip>
             </Grid>
             <Grid item xs={3}>
