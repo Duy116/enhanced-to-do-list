@@ -52,11 +52,10 @@ function Task() {
   }
 
   function handleChangeTime(e: React.ChangeEvent<HTMLInputElement>): void {
-    console.log(new Date().toISOString())
     if (newTask)
       setNewTask({
         ...newTask,
-        deadline: e.target.value,
+        deadline: format(parse(e.target.value, "yyyy-MM-dd'T'HH:mm:ss", new Date()), dateFormat),
       })
   }
 
