@@ -1,6 +1,5 @@
 'use client'
 
-import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from './Header'
 import { Box, Toolbar } from '@mui/material'
@@ -8,15 +7,12 @@ import { useState } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@/redux/store'
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function RootLayout({ children, } 
-  : { children: React.ReactNode }) {
+export default function RootLayout({ children, } : { children: React.ReactNode }) {
   const [ open, setOpen ] = useState(false);
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <Header open={open} setOpen={setOpen}/>
         <Box className={open ? 
           'flex-grow ml-60 transition-all ease-in-out duration-500' 

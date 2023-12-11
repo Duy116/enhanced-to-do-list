@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store'
 import { isAfter, isBefore, parseISO } from 'date-fns';
 
-interface ToDoState {
+export interface ToDoState {
     id: number,
     text: string,
     completed: boolean,

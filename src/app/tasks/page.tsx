@@ -1,20 +1,14 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { selectTodos, todoAdded, todoDelete, todoSort, todoToggled } from '@/redux/todosSlice';
-import { Typography, Button, Grid, Tooltip, Input, Checkbox, Select, Box, MenuItem, SelectChangeEvent, Dialog, Alert, IconButton } from '@mui/material'
+import { ToDoState, selectTodos, todoAdded, todoSort } from '@/redux/todosSlice';
+import { Typography, Button, Grid, Input, Select, Box, MenuItem, SelectChangeEvent, Dialog, Alert, IconButton, Snackbar, Stack } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react'
-import { format, isAfter, parseISO } from 'date-fns'
 import { selectUsers } from '@/redux/usersSlice';
-
-interface ToDoState {
-  id: number,
-  text: string,
-  completed: boolean,
-  deadline: string,
-  user: string,
-}
+import TaskItem from './TaskItem';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Task() {
   const [ newTask, setNewTask ] = React.useState<ToDoState>({
@@ -48,14 +42,6 @@ function Task() {
     }
   }
 
-  function handleDelete(id: number): void {
-    dispatch(todoDelete(id));
-  }
-
-  function handleToggle(id: number): void {
-    dispatch(todoToggled(id));
-  }
-
   function handleChangeUser(e: SelectChangeEvent): void {
     if (newTask)
       setNewTask({
@@ -65,6 +51,7 @@ function Task() {
   }
 
   function handleChangeTime(e: React.ChangeEvent<HTMLInputElement>): void {
+    console.log(new Date().toISOString())
     if (newTask)
       setNewTask({
         ...newTask,
@@ -79,6 +66,18 @@ function Task() {
 
   return (
     <>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Alert severity="error" action={
             <IconButton
@@ -131,33 +130,7 @@ function Task() {
       </Box>
       <Grid container spacing={1} rowSpacing={2} className='items-center ml-5'>
         {todos.map((todo) => (
-          <React.Fragment key={todo.id}>
-            <Grid item xs={4}>
-              <Tooltip title={todo.text} arrow>
-                <Typography className={isAfter(new Date(), parseISO(todo.deadline)) && !todo.completed ? 
-                  'text-red-500 text-ellipsis overflow-hidden ...'
-                  : 'text-ellipsis overflow-hidden ...'}>
-                  {todo.text}
-                </Typography>
-              </Tooltip>
-            </Grid>
-            <Grid item xs={3}>
-              <Tooltip title={todo.user} arrow>
-                <Typography className='text-ellipsis overflow-hidden ...'>{todo.user}</Typography>
-              </Tooltip>            
-            </Grid>
-            <Grid item xs={3}>
-              <Typography>
-                {format(parseISO(todo.deadline), 'hh:mm:ss a - dd/MM/yyyy')}
-              </Typography>
-            </Grid>
-            <Grid item xs>
-              <Checkbox checked={todo.completed} onChange={() => handleToggle(todo.id)}></Checkbox>
-            </Grid>
-            <Grid item xs>
-              <Button onClick={() => handleDelete(todo.id)}>X</Button>
-            </Grid>
-          </React.Fragment>
+          <TaskItem key={todo.id} todo={todo}/>
         ))}
       </Grid>
     </>
