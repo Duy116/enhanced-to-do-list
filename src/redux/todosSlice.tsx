@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store'
-import { isAfter, isBefore, parseISO } from 'date-fns';
+import { format, isAfter, isBefore, parse, parseISO } from 'date-fns';
+
+export const dateFormat = 'hh:mm:ss a - MM/dd/yyyy'
 
 export interface ToDoState {
     id: number,
@@ -18,7 +20,7 @@ function nextId(todos: ToDoState[]) {
 
 const todosSlice = createSlice({
   name: 'todos',
-  initialState: [{ id: 0, text: "Init", completed: false, deadline: new Date().toISOString().slice(0, -5), user: "Init"}],
+  initialState: [{ id: 0, text: "Init", completed: false, deadline: format(new Date(), dateFormat), user: "Init"}],
   reducers: {
     todoAdded: (state: ToDoState[], action: PayloadAction<ToDoState>) => {
       state.push({
@@ -56,8 +58,8 @@ const todosSlice = createSlice({
           return 0;
         }
         if (action.payload === "deadline") {
-          let da = parseISO(a.deadline),
-              db = parseISO(b.deadline);
+          let da = parse(a.deadline, dateFormat, new Date()),
+              db = parse(b.deadline, dateFormat, new Date());
     
           if (isAfter(da, db)) {
               return 1;

@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { ToDoState, selectTodos, todoAdded, todoSort } from '@/redux/todosSlice';
+import { ToDoState, dateFormat, selectTodos, todoAdded, todoSort } from '@/redux/todosSlice';
 import { Typography, Button, Grid, Input, Select, Box, MenuItem, SelectChangeEvent, Dialog, Alert, IconButton, Snackbar, Stack } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react'
@@ -9,13 +9,14 @@ import { selectUsers } from '@/redux/usersSlice';
 import TaskItem from './TaskItem';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { format, parse } from 'date-fns';
 
 function Task() {
   const [ newTask, setNewTask ] = React.useState<ToDoState>({
     id: -1,
     text: "",
     completed: false,
-    deadline: new Date().toISOString().slice(0, -5),
+    deadline: format(new Date(), dateFormat),
     user: "",
   });
   const [ open, setOpen ] = React.useState(false);
@@ -109,7 +110,7 @@ function Task() {
           ))}
         </Select>
         <input className='mr-5 text-base'
-          type="datetime-local" step='1' value={newTask.deadline} onChange={(e) => handleChangeTime(e)}/>
+          type="datetime-local" step='1' value={format(parse(newTask.deadline, dateFormat, new Date()), "yyyy-MM-dd'T'HH:mm:ss")} onChange={(e) => handleChangeTime(e)}/>
         <Button className='mr-5 rounded-md bg-blue-500 text-white hover:bg-blue-700'
           onClick={handleAdd}>
           Add

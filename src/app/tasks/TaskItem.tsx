@@ -1,16 +1,16 @@
 'use client'
 
 import { useAppDispatch } from '@/redux/hooks';
-import { ToDoState, todoDelete, todoToggled } from '@/redux/todosSlice';
+import { ToDoState, dateFormat, todoDelete, todoToggled } from '@/redux/todosSlice';
 import { Button, Checkbox, Grid, Tooltip, Typography } from '@mui/material';
-import { differenceInMinutes, format, isAfter, parseISO } from 'date-fns';
+import { differenceInMinutes, format, isAfter, parse, parseISO } from 'date-fns';
 import { toast } from 'react-toastify';
 import React from 'react'
 
 function TaskItem({todo} : {todo: ToDoState}) {
   const [open, setOpen] = React.useState(false);
   const calculateTimeLeft = () => {
-    let timeLeft = differenceInMinutes(parseISO(todo.deadline), new Date())
+    let timeLeft = differenceInMinutes(parse(todo.deadline, dateFormat, new Date()), new Date())
     if (timeLeft === 30 && !open) {
       setOpen(true);
       toast.warn('Task ' + todo.text + ' will end in 30 minutes', {
@@ -48,7 +48,7 @@ function TaskItem({todo} : {todo: ToDoState}) {
     <>
       <Grid item xs={3}>
         <Tooltip title={todo.text} arrow>
-          <Typography className={isAfter(new Date(), parseISO(todo.deadline)) && !todo.completed ? 
+          <Typography className={isAfter(new Date(), parse(todo.deadline, dateFormat, new Date())) && !todo.completed ? 
             'text-red-500 text-ellipsis overflow-hidden ...'
             : 'text-ellipsis overflow-hidden ...'}>
             {todo.text}
@@ -62,7 +62,7 @@ function TaskItem({todo} : {todo: ToDoState}) {
       </Grid>
       <Grid item xs={3}>
         <Typography>
-          {format(parseISO(todo.deadline), 'hh:mm:ss a - dd/MM/yyyy')}
+          {todo.deadline}
         </Typography>
       </Grid>
       <Grid item xs>
